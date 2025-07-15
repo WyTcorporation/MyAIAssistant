@@ -1,7 +1,7 @@
 # 🧠 Desktop AI Assistant with Voice & Visual Input
 
 > ⚡ Real-time voice-activated AI assistant with desktop screenshot context and TTS reply  
-> 🇺🇸 English | 🇺🇦 [Ukrainian version below](#українська-версія)
+> English | [Ukrainian version below](#українська-версія)
 
 ## 🔍 Overview
 
@@ -69,7 +69,7 @@ Run the assistant:
 
 MIT License — Free to use, modify and distribute.
 
-# 🇺🇦 Українська версія
+# Українська версія
 
 --- 
 
