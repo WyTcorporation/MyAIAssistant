@@ -91,16 +91,23 @@ class Assistant:
             self._tts(response)
 
     def _tts(self, response):
-        player = PyAudio().open(format=paInt16, channels=1, rate=24000, output=True)
+        pyaudio_instance = PyAudio()
+        stream = pyaudio_instance.open(
+            format=paInt16, channels=1, rate=24000, output=True
+        )
 
         with openai.audio.speech.with_streaming_response.create(
                 model="tts-1",
                 voice="shimmer",
                 response_format="pcm",
                 input=response,
-        ) as stream:
-            for chunk in stream.iter_bytes(chunk_size=1024):
-                player.write(chunk)
+        ) as response_stream:
+            for chunk in response_stream.iter_bytes(chunk_size=1024):
+                stream.write(chunk)
+
+        stream.stop_stream()
+        stream.close()
+        pyaudio_instance.terminate()
 
     def _create_inference_chain(self, model):
         SYSTEM_PROMPT = """
