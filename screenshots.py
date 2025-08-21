@@ -17,12 +17,17 @@ class DesktopScreenshot:
     numpy arrays or base64-encoded JPEG bytes.
     """
 
-    def __init__(self) -> None:
-        """Initialize the screenshot store and synchronization primitives."""
+    def __init__(self, interval: float = 0.1) -> None:
+        """Initialize the screenshot store and synchronization primitives.
+
+        Args:
+            interval: Delay between screenshot captures in seconds.
+        """
         self.screenshot: Optional[numpy.ndarray] = None
         self.running = False
         self.lock = Lock()
         self.thread: Optional[Thread] = None
+        self.interval = interval
 
     def start(self) -> "DesktopScreenshot":
         """Start the background thread for capturing screenshots.
@@ -48,7 +53,7 @@ class DesktopScreenshot:
             with self.lock:
                 self.screenshot = screenshot
 
-            time.sleep(0.1)
+            time.sleep(self.interval)
 
     def read(self, encode: bool = False) -> Optional[Union[numpy.ndarray, bytes]]:
         """Retrieve the latest screenshot.
