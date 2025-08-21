@@ -58,7 +58,7 @@ class DesktopScreenshot:
 
     def stop(self):
         self.running = False
-        if self.thread.is_alive():
+        if hasattr(self, "thread") and self.thread.is_alive():
             self.thread.join()
 
 
