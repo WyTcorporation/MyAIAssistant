@@ -1,4 +1,5 @@
 import logging
+import argparse
 import cv2
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -10,13 +11,18 @@ from screenshots import DesktopScreenshot
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default="gpt-4o")
+    parser.add_argument("--voice", default="shimmer")
+    args = parser.parse_args()
+
     load_dotenv()
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
     desktop_screenshot = DesktopScreenshot().start()
-    model = ChatOpenAI(model="gpt-4o")
-    assistant = Assistant(model)
+    model = ChatOpenAI(model=args.model)
+    assistant = Assistant(model, voice=args.voice)
 
     def audio_callback(recognizer, audio):
         try:
