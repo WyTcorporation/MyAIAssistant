@@ -153,6 +153,8 @@ def audio_callback(recognizer, audio):
         assistant.answer(prompt, desktop_screenshot.read(encode=True))
     except UnknownValueError:
         print("There was an error processing the audio.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
 
 
 recognizer = Recognizer()
