@@ -17,14 +17,16 @@ class Assistant:
     speech system to provide audible answers to user prompts.
     """
 
-    def __init__(self, model: ChatOpenAI) -> None:
-        """Initialize the assistant with the given language model.
+    def __init__(self, model: ChatOpenAI, voice: str) -> None:
+        """Initialize the assistant with the given language model and voice.
 
         Args:
             model: Chat model used to generate responses.
+            voice: Voice name used for text-to-speech.
         """
 
         self.chain = self._create_inference_chain(model)
+        self.voice = voice
 
     def answer(self, prompt: str, image: Optional[bytes]) -> None:
         """Generate a spoken answer for the provided prompt and image.
@@ -72,7 +74,7 @@ class Assistant:
 
         with openai.audio.speech.with_streaming_response.create(
             model="tts-1",
-            voice="shimmer",
+            voice=self.voice,
             response_format="pcm",
             input=response,
         ) as response_stream:
