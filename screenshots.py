@@ -2,12 +2,16 @@ import base64
 import time
 from threading import Lock, Thread
 
+import logging
 import cv2
 import numpy
 from PIL import ImageGrab
 from cv2 import imencode
 
 from typing import Optional, Union
+
+
+logger = logging.getLogger(__name__)
 
 
 class DesktopScreenshot:
@@ -47,11 +51,14 @@ class DesktopScreenshot:
     def update(self) -> None:
         """Capture screenshots repeatedly while the thread is running."""
         while self.running:
-            screenshot = ImageGrab.grab()
-            screenshot = cv2.cvtColor(numpy.array(screenshot), cv2.COLOR_RGB2BGR)
+            try:
+                screenshot = ImageGrab.grab()
+                screenshot = cv2.cvtColor(numpy.array(screenshot), cv2.COLOR_RGB2BGR)
 
-            with self.lock:
-                self.screenshot = screenshot
+                with self.lock:
+                    self.screenshot = screenshot
+            except Exception as e:
+                logger.error("Failed to capture screenshot: %s", e)
 
             time.sleep(self.interval)
 
