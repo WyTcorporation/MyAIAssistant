@@ -5,13 +5,35 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from pyaudio import PyAudio, paInt16
+from langchain_openai import ChatOpenAI
+
+from typing import Optional
 
 
 class Assistant:
-    def __init__(self, model):
+    """Generate conversational responses and speak them out loud.
+
+    The assistant wraps a chat model with conversation history and a text-to-
+    speech system to provide audible answers to user prompts.
+    """
+
+    def __init__(self, model: ChatOpenAI) -> None:
+        """Initialize the assistant with the given language model.
+
+        Args:
+            model: Chat model used to generate responses.
+        """
+
         self.chain = self._create_inference_chain(model)
 
-    def answer(self, prompt, image):
+    def answer(self, prompt: str, image: Optional[bytes]) -> None:
+        """Generate a spoken answer for the provided prompt and image.
+
+        Args:
+            prompt: User's text prompt.
+            image: Optional base64-encoded screenshot related to the prompt.
+        """
+
         if not prompt:
             return
 
@@ -36,7 +58,13 @@ class Assistant:
         if response:
             self._tts(response)
 
-    def _tts(self, response):
+    def _tts(self, response: str) -> None:
+        """Convert a text response to speech and play it back.
+
+        Args:
+            response: The text to synthesize and play.
+        """
+
         pyaudio_instance = PyAudio()
         stream = pyaudio_instance.open(
             format=paInt16, channels=1, rate=24000, output=True
@@ -55,7 +83,16 @@ class Assistant:
         stream.close()
         pyaudio_instance.terminate()
 
-    def _create_inference_chain(self, model):
+    def _create_inference_chain(self, model: ChatOpenAI) -> RunnableWithMessageHistory:
+        """Create the runnable inference chain used to generate responses.
+
+        Args:
+            model: Chat model used to generate responses.
+
+        Returns:
+            A runnable that maintains chat history and invokes the model.
+        """
+
         SYSTEM_PROMPT = """
         You are a witty assistant that will use the chat history and the image
         provided by the user to answer its questions.
