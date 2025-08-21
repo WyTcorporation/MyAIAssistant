@@ -72,9 +72,12 @@ class Assistant:
 
         print("Prompt:", prompt)
 
+        image_base64 = image.decode() if image is not None else ""
+
         response = self.chain.invoke(
             {
-                "prompt": prompt, "image_base64": image.decode()
+                "prompt": prompt,
+                "image_base64": image_base64,
             },
             config={
                 "configurable":
