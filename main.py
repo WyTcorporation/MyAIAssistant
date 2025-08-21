@@ -150,7 +150,11 @@ assistant = Assistant(model)
 def audio_callback(recognizer, audio):
     try:
         prompt = recognizer.recognize_whisper(audio, model="base", language="english")
-        assistant.answer(prompt, desktop_screenshot.read(encode=True))
+        image = desktop_screenshot.read(encode=True)
+        if image is None:
+            print("Skipping response: screenshot not available.")
+            return
+        assistant.answer(prompt, image)
     except UnknownValueError:
         print("There was an error processing the audio.")
 
