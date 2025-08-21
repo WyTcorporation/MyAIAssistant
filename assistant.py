@@ -68,22 +68,25 @@ class Assistant:
         """
 
         pyaudio_instance = PyAudio()
-        stream = pyaudio_instance.open(
-            format=paInt16, channels=1, rate=24000, output=True
-        )
+        stream = None
+        try:
+            stream = pyaudio_instance.open(
+                format=paInt16, channels=1, rate=24000, output=True
+            )
 
-        with openai.audio.speech.with_streaming_response.create(
-            model="tts-1",
-            voice=self.voice,
-            response_format="pcm",
-            input=response,
-        ) as response_stream:
-            for chunk in response_stream.iter_bytes(chunk_size=1024):
-                stream.write(chunk)
-
-        stream.stop_stream()
-        stream.close()
-        pyaudio_instance.terminate()
+            with openai.audio.speech.with_streaming_response.create(
+                model="tts-1",
+                voice=self.voice,
+                response_format="pcm",
+                input=response,
+            ) as response_stream:
+                for chunk in response_stream.iter_bytes(chunk_size=1024):
+                    stream.write(chunk)
+        finally:
+            if stream is not None:
+                stream.stop_stream()
+                stream.close()
+            pyaudio_instance.terminate()
 
     def _create_inference_chain(self, model: ChatOpenAI) -> RunnableWithMessageHistory:
         """Create the runnable inference chain used to generate responses.
