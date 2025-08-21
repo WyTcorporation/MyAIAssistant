@@ -9,10 +9,8 @@ from assistant import Assistant
 from screenshots import DesktopScreenshot
 
 
-load_dotenv()
-
-
 def main():
+    load_dotenv()
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
