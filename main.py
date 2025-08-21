@@ -39,16 +39,14 @@ class DesktopScreenshot:
             screenshot = ImageGrab.grab()
             screenshot = cv2.cvtColor(numpy.array(screenshot), cv2.COLOR_RGB2BGR)
 
-            self.lock.acquire()
-            self.screenshot = screenshot
-            self.lock.release()
+            with self.lock:
+                self.screenshot = screenshot
 
             time.sleep(0.1)
 
     def read(self, encode=False):
-        self.lock.acquire()
-        screenshot = self.screenshot.copy() if self.screenshot is not None else None
-        self.lock.release()
+        with self.lock:
+            screenshot = self.screenshot.copy() if self.screenshot is not None else None
 
         if encode and screenshot is not None:
             _, buffer = imencode(".jpeg", screenshot)
